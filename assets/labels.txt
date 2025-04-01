@@ -1,0 +1,14 @@
+0 Ants
+1 Aphids
+2 Cacao Fruit Fly
+3 Cacao Mirid Bug
+4 Cacao Weevils Borer
+5 Fungus Gnats
+6 Helopeltis
+7 Mealybugs
+8 Monolepta Beetles
+9 Orgyia Tussock Moth (Caterpillar)
+10 Sap-sucking Bugs
+11 Stem Borer
+12 Stink Bugs
+13 Whiteflies
