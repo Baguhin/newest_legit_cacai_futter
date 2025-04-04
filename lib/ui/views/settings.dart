@@ -1,3 +1,4 @@
+import 'package:cacai/ui/views/average_rating_page.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -24,7 +25,6 @@ class SettingsPage extends StatelessWidget {
         ),
         padding: const EdgeInsets.all(16.0),
         child: ListView(
-          // 🔥 FIX: Replaces Column with ListView to avoid overflow
           children: [
             _buildSectionTitle('Preferences'),
             _buildSettingsCard([
@@ -102,8 +102,25 @@ class SettingsPage extends StatelessWidget {
                 },
               ),
             ]),
-            const SizedBox(
-                height: 100), // 🔥 Adds extra space for FAB clearance
+            _buildSectionTitle('App Ratings'),
+            _buildSettingsCard([
+              _buildListTile(
+                icon: Icons.star,
+                title: 'View All Ratings',
+                subtitle: 'See the average and total ratings',
+                onTap: () {
+                  // Navigate to the AverageRatingPage to view all ratings
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const AverageRatingPage(), // Navigate to AverageRatingPage
+                    ),
+                  );
+                },
+              ),
+            ]),
+            const SizedBox(height: 100), // Adds extra space for FAB clearance
           ],
         ),
       ),

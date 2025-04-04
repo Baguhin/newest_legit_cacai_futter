@@ -1,3 +1,4 @@
+import 'package:cacai/ui/views/rating.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shimmer/shimmer.dart';
@@ -17,34 +18,20 @@ class HomeView extends StackedView<HomeViewModel> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.info_outline),
+            icon: const Icon(Icons.star),
             onPressed: () {
-              // Show an alert dialog when the info icon is pressed
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text('Information'),
-                    content: const Text(
-                        'This is an image processing app using AI for pest identification.'),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Close the dialog
-                        },
-                        child: const Text('OK'),
-                      ),
-                    ],
-                  );
-                },
+              // Navigate to RatingPage when the star button is pressed
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RatingPage(
+                      userId: "your_user_id_here"), // Pass userId if needed
+                ),
               );
             },
           ),
         ],
       ),
-
-      // Your body content goes here...
-
       body: Container(
         decoration: const BoxDecoration(
           color: Colors.white,

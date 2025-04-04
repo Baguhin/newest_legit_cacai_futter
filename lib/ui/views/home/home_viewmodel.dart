@@ -146,7 +146,7 @@ class HomeViewModel extends BaseViewModel {
 
   Future<void> _fetchDataFromGemini(String insectName) async {
     final String apiUrl =
-        'https://41cc66e8-7337-47db-9bf1-b6d8b2644eeb-00-33j5pxrbyd20z.pike.replit.dev/api/insect-info/$insectName';
+        'https://jaylou-backend.onrender.com/api/insect-info/$insectName';
 
     try {
       print("🚀 Fetching data from: $apiUrl");
@@ -177,7 +177,7 @@ class HomeViewModel extends BaseViewModel {
 
   Future<bool> _checkIfInsectExists(File image) async {
     const String apiUrl =
-        'https://41cc66e8-7337-47db-9bf1-b6d8b2644eeb-00-33j5pxrbyd20z.pike.replit.dev/api/detect-insect';
+        'https://jaylou-backend.onrender.com/api/detect-insect';
 
     try {
       print("🚀 Checking if the image contains an insect...");

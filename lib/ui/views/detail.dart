@@ -40,7 +40,7 @@ class PestDetailPage extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: Image.network(
-                    'https://41cc66e8-7337-47db-9bf1-b6d8b2644eeb-00-33j5pxrbyd20z.pike.replit.dev/${pest["image"]}',
+                    'https://jaylou-backend.onrender.com${pest["image"]}',
                     width: double.infinity,
                     height: 250,
                     fit: BoxFit.cover,

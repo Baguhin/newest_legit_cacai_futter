@@ -23,8 +23,8 @@ class _PestMapPageState extends State<PestMapPage> {
 
   Future<void> _fetchHeatmapData() async {
     try {
-      final response = await http.get(Uri.parse(
-          'https://41cc66e8-7337-47db-9bf1-b6d8b2644eeb-00-33j5pxrbyd20z.pike.replit.dev/api/map/heatmap'));
+      final response = await http.get(
+          Uri.parse('https://jaylou-backend.onrender.com/api/map/heatmap'));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         setState(() {
@@ -55,8 +55,7 @@ class _PestMapPageState extends State<PestMapPage> {
   Future<void> _reportPest(LatLng location) async {
     try {
       await http.post(
-        Uri.parse(
-            'https://41cc66e8-7337-47db-9bf1-b6d8b2644eeb-00-33j5pxrbyd20z.pike.replit.dev/api/map/report'),
+        Uri.parse('https://jaylou-backend.onrender.com/api/map/report'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'pestId': '123', // Replace with actual pest ID
@@ -128,7 +127,7 @@ class _PestMapPageState extends State<PestMapPage> {
             context: context,
             builder: (context) => FutureBuilder(
               future: http.get(Uri.parse(
-                  'https://41cc66e8-7337-47db-9bf1-b6d8b2644eeb-00-33j5pxrbyd20z.pike.replit.dev/api/map/nearby')),
+                  'https://jaylou-backend.onrender.com/api/map/nearby')),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());

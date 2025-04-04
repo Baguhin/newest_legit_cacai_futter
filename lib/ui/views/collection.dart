@@ -7,8 +7,7 @@ import 'package:shimmer/shimmer.dart';
 import 'addinsect.dart';
 import 'collectiondescription.dart';
 
-const String baseUrl =
-    "https://41cc66e8-7337-47db-9bf1-b6d8b2644eeb-00-33j5pxrbyd20z.pike.replit.dev";
+const String baseUrl = "https://jaylou-backend.onrender.com";
 
 class CollectionPage extends StatefulWidget {
   const CollectionPage({super.key});

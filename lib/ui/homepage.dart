@@ -31,8 +31,8 @@ class _PestListHomePageState extends State<PestListHomePage> {
   }
 
   Future<void> fetchPests() async {
-    final response = await http.get(Uri.parse(
-        'https://41cc66e8-7337-47db-9bf1-b6d8b2644eeb-00-33j5pxrbyd20z.pike.replit.dev/api/pests'));
+    final response = await http
+        .get(Uri.parse('https://jaylou-backend.onrender.com/api/pests'));
 
     if (response.statusCode == 200) {
       if (mounted) {
@@ -174,7 +174,7 @@ class _PestListHomePageState extends State<PestListHomePage> {
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(15)),
                 child: Image.network(
-                  'https://41cc66e8-7337-47db-9bf1-b6d8b2644eeb-00-33j5pxrbyd20z.pike.replit.dev/${pest["image"]}',
+                  'https://jaylou-backend.onrender.com${pest["image"]}',
                   width: double.infinity,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => const Icon(

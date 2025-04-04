@@ -35,8 +35,7 @@ class NavigationBarWithFABViewModel extends BaseViewModel {
       }
 
       // Define the logout URL
-      final url = Uri.parse(
-          'https://41cc66e8-7337-47db-9bf1-b6d8b2644eeb-00-33j5pxrbyd20z.pike.replit.dev/api/logout');
+      final url = Uri.parse('https://jaylou-backend.onrender.com/api/logout');
 
       // Make the logout request with the token in headers
       final response = await http.post(

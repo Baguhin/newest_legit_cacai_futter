@@ -43,8 +43,7 @@ class _AddInsectFormState extends State<AddInsectForm> {
     if (_formKey.currentState?.validate() ?? false) {
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse(
-            "https://41cc66e8-7337-47db-9bf1-b6d8b2644eeb-00-33j5pxrbyd20z.pike.replit.dev/api/add-insect"),
+        Uri.parse("https://jaylou-backend.onrender.com/api/add-insect"),
       );
       request.fields['name'] = _nameController.text;
       request.fields['description'] = _descriptionController.text;

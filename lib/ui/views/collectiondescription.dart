@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-const String baseUrl =
-    "https://41cc66e8-7337-47db-9bf1-b6d8b2644eeb-00-33j5pxrbyd20z.pike.replit.dev/";
+const String baseUrl = "https://jaylou-backend.onrender.com/";
 
 class InsectDescriptionPage extends StatelessWidget {
   final Map<String, dynamic> insect;
