@@ -13,7 +13,7 @@ class HomeView extends StackedView<HomeViewModel> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Image Processing"),
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.green.shade800,
         centerTitle: true,
         actions: [
           IconButton(
@@ -172,7 +172,7 @@ class HomeView extends StackedView<HomeViewModel> {
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
+                              backgroundColor: Colors.green.shade800,
                               padding: const EdgeInsets.symmetric(vertical: 15),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -198,7 +198,7 @@ class HomeView extends StackedView<HomeViewModel> {
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
+                              backgroundColor: Colors.green.shade800,
                               padding: const EdgeInsets.symmetric(vertical: 15),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),

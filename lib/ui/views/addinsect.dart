@@ -93,7 +93,7 @@ class _AddInsectFormState extends State<AddInsectForm> {
                 controller: _nameController,
                 decoration: InputDecoration(
                   labelText: "Name",
-                  labelStyle: TextStyle(color: Colors.green[700]),
+                  labelStyle: TextStyle(color: Colors.green[800]),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(color: Colors.green),
@@ -111,14 +111,14 @@ class _AddInsectFormState extends State<AddInsectForm> {
                 controller: _descriptionController,
                 decoration: InputDecoration(
                   labelText: "Description",
-                  labelStyle: TextStyle(color: Colors.green[700]),
+                  labelStyle: TextStyle(color: Colors.green[800]),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(color: Colors.green),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.green[700]!),
+                    borderSide: BorderSide(color: Colors.green[800]!),
                   ),
                 ),
                 validator: (value) =>
@@ -132,14 +132,14 @@ class _AddInsectFormState extends State<AddInsectForm> {
                 controller: _dateController,
                 decoration: InputDecoration(
                   labelText: "Date",
-                  labelStyle: TextStyle(color: Colors.green[700]),
+                  labelStyle: TextStyle(color: Colors.green[800]),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(color: Colors.green),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.green[700]!),
+                    borderSide: BorderSide(color: Colors.green[800]!),
                   ),
                 ),
                 validator: (value) =>
@@ -154,19 +154,19 @@ class _AddInsectFormState extends State<AddInsectForm> {
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.green[700]!),
+                    border: Border.all(color: Colors.green[800]!),
                   ),
                   child: _imageFile == null
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Icon(Icons.camera_alt, color: Colors.green[700]),
+                            Icon(Icons.camera_alt, color: Colors.green[800]),
                             const SizedBox(height: 10),
                             Text(
                               "Pick an image",
                               style: TextStyle(
-                                  color: Colors.green[700],
+                                  color: Colors.green[800],
                                   fontWeight: FontWeight.bold),
                             ),
                           ],

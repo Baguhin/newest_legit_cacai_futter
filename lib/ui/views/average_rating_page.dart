@@ -68,7 +68,7 @@ class _AverageRatingPageState extends State<AverageRatingPage> {
               const SizedBox(height: 20),
               isLoading
                   ? CircularProgressIndicator(
-                      color: Colors.green,
+                      color: Colors.green.shade800,
                     )
                   : Column(
                       children: [
@@ -107,7 +107,7 @@ class _AverageRatingPageState extends State<AverageRatingPage> {
                 icon: const Icon(Icons.refresh),
                 label: const Text("Refresh"),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
+                  backgroundColor: Colors.green.shade800,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   shape: RoundedRectangleBorder(

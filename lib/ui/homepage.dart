@@ -81,7 +81,7 @@ class _PestListHomePageState extends State<PestListHomePage> {
           horizontal: 16, vertical: 24), // Increased padding
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.green.shade600, Colors.green.shade800],
+          colors: [Colors.green.shade800, Colors.green.shade800],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),

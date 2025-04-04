@@ -54,10 +54,9 @@ class NavigationBarWithFABViewModel extends BaseViewModel {
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Logout successful!'),
-            duration: Duration(seconds: 2),
-            backgroundColor: Colors.green,
-          ),
+              content: Text('Logout successful!'),
+              duration: Duration(seconds: 2),
+              backgroundColor: Colors.green),
         );
 
         Future.delayed(const Duration(seconds: 2), () {

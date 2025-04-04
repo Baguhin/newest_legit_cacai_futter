@@ -110,7 +110,7 @@ class _GeminiChatPageState extends State<GeminiChatPage> {
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: message["role"] == "user"
-                          ? Colors.green.shade300
+                          ? Colors.green.shade800
                           : Colors.grey.shade300,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [

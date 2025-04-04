@@ -8,7 +8,7 @@ class PestDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green.shade100,
+      backgroundColor: Colors.green.shade800,
       appBar: AppBar(
         title: Text(
           pest["name"],

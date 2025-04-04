@@ -187,8 +187,9 @@ class ResultsPage extends StatelessWidget {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          Colors.transparent,
-                          Colors.black.withOpacity(0.7),
+                          const Color.fromARGB(0, 18, 18, 18),
+                          const Color.fromARGB(255, 17, 16, 16)
+                              .withOpacity(0.7),
                         ],
                       ),
                     ),
@@ -198,13 +199,19 @@ class ResultsPage extends StatelessWidget {
             ),
             actions: [
               IconButton(
-                icon: const Icon(Icons.share),
+                icon: const Icon(
+                  Icons.share,
+                  color: Colors.white, // Set icon color to white
+                ),
                 onPressed: () {
                   // Implement share functionality
                 },
               ),
               IconButton(
-                icon: const Icon(Icons.bookmark_border),
+                icon: const Icon(
+                  Icons.bookmark_border,
+                  color: Colors.white, // Set icon color to white
+                ),
                 onPressed: () {
                   // Implement save/bookmark functionality
                 },

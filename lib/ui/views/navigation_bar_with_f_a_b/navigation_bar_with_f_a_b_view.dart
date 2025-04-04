@@ -81,7 +81,7 @@ class _BottomNavDrawerState extends State<BottomNavDrawer> {
                   ),
                 );
               },
-              backgroundColor: Colors.green.shade700,
+              backgroundColor: Colors.green.shade800,
               elevation: 6,
               child: const Icon(
                 Icons.camera_enhance_rounded,
@@ -95,7 +95,7 @@ class _BottomNavDrawerState extends State<BottomNavDrawer> {
         onItemSelected: _onItemTapped,
         selectedIndex: _selectedIndex,
         bottomPadding: 10,
-        waterDropColor: Colors.green.shade700,
+        waterDropColor: Colors.green.shade800,
         iconSize: 30,
         barItems: [
           BarItem(
