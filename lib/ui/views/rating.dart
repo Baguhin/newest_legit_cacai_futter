@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RatingPage extends StatefulWidget {
+  // Make userId optional with a default empty string
   final String userId;
 
-  const RatingPage({super.key, required this.userId});
+  const RatingPage({super.key, this.userId = ''});
 
   @override
   _RatingPageState createState() => _RatingPageState();
@@ -14,60 +16,49 @@ class RatingPage extends StatefulWidget {
 
 class _RatingPageState extends State<RatingPage> {
   double _rating = 3;
-  bool _hasRated = false;
+  bool _isSubmitted = false;
   String _message = '';
   bool _isLoading = false;
-  bool _checkingPreviousRating = true;
+  String _effectiveUserId = '';
 
   @override
   void initState() {
     super.initState();
-    // Check if user has already rated when page loads
-    _checkPreviousRating();
+    _initializeUserId();
   }
 
-  // Check if user has already submitted a rating
-  Future<void> _checkPreviousRating() async {
-    setState(() {
-      _checkingPreviousRating = true;
-    });
-
-    final url = Uri.parse("https://jaylou-backend.onrender.com/api/rate-app");
-
-    try {
-      // We're using a POST request with the user_id to check if they've already rated
-      // In a real app, you might want a separate GET endpoint for this check
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          "user_id": widget.userId,
-          "stars": 0, // Dummy value that will be rejected by backend validation
-        }),
-      );
-
-      final data = jsonDecode(response.body);
-
-      // If we get a 409 conflict error, user has already rated
-      if (response.statusCode == 409) {
-        setState(() {
-          _hasRated = true;
-          _message = data["message"] ?? "You have already rated the app.";
-        });
-      }
-    } catch (e) {
-      // If check fails, we'll still allow rating but might get rejected on submit
+  // Initialize user ID from props or generate one if not available
+  Future<void> _initializeUserId() async {
+    if (widget.userId.isNotEmpty) {
       setState(() {
-        _message = "";
+        _effectiveUserId = widget.userId;
       });
-    } finally {
+    } else {
+      // Get stored ID or generate a new one
+      final prefs = await SharedPreferences.getInstance();
+      String storedId = prefs.getString('user_id') ?? '';
+
+      if (storedId.isEmpty) {
+        // Generate a simple unique ID based on timestamp if needed
+        storedId = DateTime.now().millisecondsSinceEpoch.toString();
+        await prefs.setString('user_id', storedId);
+      }
+
       setState(() {
-        _checkingPreviousRating = false;
+        _effectiveUserId = storedId;
       });
     }
   }
 
   Future<void> submitRating() async {
+    // Validate user ID
+    if (_effectiveUserId.isEmpty) {
+      setState(() {
+        _message = "User ID is missing. Please try again later.";
+      });
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _message = '';
@@ -80,27 +71,23 @@ class _RatingPageState extends State<RatingPage> {
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          "user_id": widget.userId,
+          "user_id": _effectiveUserId,
           "stars": _rating.toInt(),
+          "allow_multiple":
+              true, // Add flag to allow multiple ratings from same user
         }),
       );
 
       final data = jsonDecode(response.body);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         setState(() {
-          _hasRated = true;
+          _isSubmitted = true;
           _message = "Thanks for your feedback!";
         });
       } else {
         setState(() {
-          if (response.statusCode == 409) {
-            _hasRated = true;
-            _message = data["message"] ?? "You have already rated the app.";
-          } else {
-            _message =
-                data["message"] ?? "An error occurred. Please try again.";
-          }
+          _message = data["message"] ?? "An error occurred. Please try again.";
         });
       }
     } catch (e) {
@@ -112,6 +99,14 @@ class _RatingPageState extends State<RatingPage> {
         _isLoading = false;
       });
     }
+  }
+
+  void resetForm() {
+    setState(() {
+      _isSubmitted = false;
+      _rating = 3;
+      _message = '';
+    });
   }
 
   @override
@@ -139,6 +134,24 @@ class _RatingPageState extends State<RatingPage> {
           child: Column(
             children: [
               const SizedBox(height: 20),
+              // Show the current user ID for debugging (can be removed in production)
+              if (_effectiveUserId.isNotEmpty) ...[
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    "User ID: $_effectiveUserId",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+              ],
               Expanded(
                 child: Card(
                   elevation: 4,
@@ -146,40 +159,17 @@ class _RatingPageState extends State<RatingPage> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: _checkingPreviousRating
-                      ? _buildLoadingState()
-                      : AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 300),
-                          child: _hasRated
-                              ? _buildThankYouMessage()
-                              : _buildRatingForm(),
-                        ),
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    child: _isSubmitted
+                        ? _buildThankYouMessage()
+                        : _buildRatingForm(),
+                  ),
                 ),
               ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildLoadingState() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(
-            color: Color(0xFF5271FF),
-          ),
-          SizedBox(height: 16),
-          Text(
-            "Checking rating status...",
-            style: TextStyle(
-              color: Color(0xFF6E6E6E),
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -248,9 +238,9 @@ class _RatingPageState extends State<RatingPage> {
 
           const SizedBox(height: 40),
 
-          // Text indicating one-time rating
+          // Updated text showing users can rate multiple times
           const Text(
-            "You can only rate the app once",
+            "You can provide feedback anytime! We value your ongoing input.",
             style: TextStyle(
               fontSize: 14,
               color: Color(0xFF6E6E6E),
@@ -301,14 +291,19 @@ class _RatingPageState extends State<RatingPage> {
             Container(
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
               decoration: BoxDecoration(
-                color: Colors.red.shade50,
+                color: _isSubmitted ? Colors.green.shade50 : Colors.red.shade50,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.red.shade200),
+                border: Border.all(
+                    color: _isSubmitted
+                        ? Colors.green.shade200
+                        : Colors.red.shade200),
               ),
               child: Text(
                 _message,
                 style: TextStyle(
-                  color: Colors.red.shade700,
+                  color: _isSubmitted
+                      ? Colors.green.shade700
+                      : Colors.red.shade700,
                   fontWeight: FontWeight.w500,
                 ),
                 textAlign: TextAlign.center,
@@ -335,40 +330,32 @@ class _RatingPageState extends State<RatingPage> {
   }
 
   Widget _buildThankYouMessage() {
-    final bool isErrorMessage = _message != "Thanks for your feedback!";
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Success or info icon
+          // Success icon
           Container(
             width: 100,
             height: 100,
             decoration: BoxDecoration(
-              color: isErrorMessage
-                  ? const Color(0xFFFFF3E0) // Light orange for warning
-                  : const Color(0xFFE9F2FF), // Light blue for success
+              color: const Color(0xFFE9F2FF),
               borderRadius: BorderRadius.circular(50),
             ),
-            child: Icon(
-              isErrorMessage
-                  ? Icons.info_outline_rounded
-                  : Icons.check_circle_rounded,
+            child: const Icon(
+              Icons.check_circle_rounded,
               size: 60,
-              color: isErrorMessage
-                  ? Colors.orange // Orange for warning
-                  : const Color(0xFF5271FF), // Blue for success
+              color: Color(0xFF5271FF),
             ),
           ),
 
           const SizedBox(height: 24),
 
-          // Thank you or info message
-          Text(
-            _message,
-            style: const TextStyle(
+          // Thank you message
+          const Text(
+            "Thanks for your feedback!",
+            style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
               color: Color(0xFF303030),
@@ -378,11 +365,9 @@ class _RatingPageState extends State<RatingPage> {
 
           const SizedBox(height: 16),
 
-          Text(
-            isErrorMessage
-                ? "You can only submit one rating per user."
-                : "We appreciate you taking the time to share your thoughts.",
-            style: const TextStyle(
+          const Text(
+            "We appreciate you taking the time to share your thoughts.",
+            style: TextStyle(
               fontSize: 16,
               color: Color(0xFF6E6E6E),
             ),
@@ -391,28 +376,60 @@ class _RatingPageState extends State<RatingPage> {
 
           const SizedBox(height: 40),
 
-          // Done button
-          SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF5271FF),
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+          // Buttons row
+          Row(
+            children: [
+              // Rate again button
+              Expanded(
+                child: SizedBox(
+                  height: 52,
+                  child: OutlinedButton(
+                    onPressed: resetForm,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF5271FF),
+                      side: const BorderSide(color: Color(0xFF5271FF)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      "Rate Again",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
                 ),
               ),
-              child: const Text(
-                "Done",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+
+              const SizedBox(width: 12),
+
+              // Done button
+              Expanded(
+                child: SizedBox(
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF5271FF),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      "Done",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
         ],
       ),

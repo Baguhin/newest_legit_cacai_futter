@@ -1,6 +1,8 @@
+import 'package:cacai/ui/views/rating.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AverageRatingPage extends StatefulWidget {
   const AverageRatingPage({super.key});
@@ -14,6 +16,26 @@ class _AverageRatingPageState extends State<AverageRatingPage> {
   int total = 0;
   bool isLoading = true; // For loading state
   String errorMessage = '';
+  String userId = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _getUserId();
+    fetchAverage();
+  }
+
+  Future<void> _getUserId() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final storedId = prefs.getString('user_id') ?? '';
+      setState(() {
+        userId = storedId;
+      });
+    } catch (e) {
+      // Handle error silently
+    }
+  }
 
   Future<void> fetchAverage() async {
     final url =
@@ -48,15 +70,15 @@ class _AverageRatingPageState extends State<AverageRatingPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    fetchAverage();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("App Rating Summary")),
+      appBar: AppBar(
+        title: const Text("App Rating Summary"),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -64,56 +86,163 @@ class _AverageRatingPageState extends State<AverageRatingPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Text("⭐ Average Rating", style: TextStyle(fontSize: 24)),
-              const SizedBox(height: 20),
-              isLoading
-                  ? CircularProgressIndicator(
-                      color: Colors.green.shade800,
-                    )
-                  : Column(
-                      children: [
-                        Text(
-                          average.toStringAsFixed(1),
-                          style: const TextStyle(
-                            fontSize: 48,
-                            color: Colors.amber,
-                            fontWeight: FontWeight.bold,
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.star_rounded,
+                            color: Colors.amber[600],
+                            size: 36,
+                          ),
+                          const SizedBox(width: 12),
+                          const Text(
+                            "Average Rating",
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF303030),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 30),
+                      isLoading
+                          ? const CircularProgressIndicator(
+                              color: Color(0xFF5271FF),
+                            )
+                          : Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.baseline,
+                                  textBaseline: TextBaseline.alphabetic,
+                                  children: [
+                                    Text(
+                                      average.toStringAsFixed(1),
+                                      style: TextStyle(
+                                        fontSize: 72,
+                                        color: Colors.amber[700],
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      " / 5",
+                                      style: TextStyle(
+                                        fontSize: 30,
+                                        color: Colors.grey[600],
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[100],
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  child: Text(
+                                    "Based on $total rating(s)",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey[700],
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                      if (errorMessage.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade50,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.red.shade200),
+                            ),
+                            child: Text(
+                              errorMessage,
+                              style: TextStyle(
+                                color: Colors.red.shade700,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        Text(
-                          "Based on $total rating(s)",
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-              const SizedBox(height: 20),
-              if (errorMessage.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    errorMessage,
-                    style: const TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                    textAlign: TextAlign.center,
+                      const SizedBox(height: 24),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          OutlinedButton.icon(
+                            onPressed: fetchAverage,
+                            icon: const Icon(Icons.refresh),
+                            label: const Text("Refresh"),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: const Color(0xFF5271FF),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
+                            ),
+                          ),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      RatingPage(userId: userId),
+                                ),
+                              ).then((_) => fetchAverage());
+                            },
+                            icon: const Icon(Icons.star_outline),
+                            label: const Text("Rate Now"),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF5271FF),
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-              const SizedBox(height: 20),
-              ElevatedButton.icon(
-                onPressed: fetchAverage,
-                icon: const Icon(Icons.refresh),
-                label: const Text("Refresh"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green.shade800,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  elevation: 5,
+              ),
+              const SizedBox(height: 24),
+              Text(
+                "You can rate our app multiple times!",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                  fontStyle: FontStyle.italic,
                 ),
               ),
             ],

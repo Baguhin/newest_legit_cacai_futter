@@ -34,6 +34,8 @@ class HomeViewModel extends BaseViewModel {
 
   get isLoading => null;
 
+  get setCarouselIndex => null;
+
   Future<void> _loadModel() async {
     try {
       _interpreter = await Interpreter.fromAsset('assets/model.tflite');
