@@ -14,41 +14,31 @@ class _GeminiChatPageState extends State<GeminiChatPage> {
   final ScrollController _scrollController = ScrollController();
   List<Map<String, String>> messages = [];
   bool isLoading = false;
-  final String apiKey =
-      "AIzaSyC6_TvBbuGRaZLiu-aKPMcevcavuZRR-W4"; // Replace with your actual API key
+
+  final String backendApiUrl = "https://jaylou-backend.onrender.com/chat";
 
   Future<void> sendMessage(String message) async {
     if (message.trim().isEmpty) return;
+
     setState(() {
       messages.add({"role": "user", "text": message});
       isLoading = true;
     });
+
     _controller.clear();
     _scrollToBottom();
 
-    final String apiUrl =
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$apiKey";
-
     try {
       final response = await http.post(
-        Uri.parse(apiUrl),
+        Uri.parse(backendApiUrl),
         headers: {"Content-Type": "application/json"},
-        body: json.encode({
-          "contents": [
-            {
-              "parts": [
-                {"text": message}
-              ]
-            }
-          ]
-        }),
+        body: json.encode({"message": message}),
       );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        String botReply = data["candidates"]?[0]["content"]?["parts"]?[0]
-                ["text"] ??
-            "No response.";
+        final botReply = data["response"] ?? "No response.";
+
         setState(() {
           messages.add({"role": "bot", "text": botReply});
           isLoading = false;
@@ -64,17 +54,22 @@ class _GeminiChatPageState extends State<GeminiChatPage> {
       }
     } catch (e) {
       setState(() {
-        messages.add(
-            {"role": "bot", "text": "An error occurred. Please try again."});
+        messages.add({
+          "role": "bot",
+          "text": "An error occurred. Please check your connection."
+        });
         isLoading = false;
       });
     }
+
     _scrollToBottom();
   }
 
   void _scrollToBottom() {
     Future.delayed(const Duration(milliseconds: 300), () {
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      }
     });
   }
 
@@ -123,10 +118,12 @@ class _GeminiChatPageState extends State<GeminiChatPage> {
                     ),
                     child: Text(
                       message["text"]!,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
-                        color: Colors.black87,
+                        color: message["role"] == "user"
+                            ? Colors.white
+                            : Colors.black87,
                       ),
                     ),
                   ),
